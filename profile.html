@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - SkillSwap</title>
+  <meta name="description" content="Manage your SkillSwap profile, skills, and bio.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="container">
+        <a href="index.html" class="logo">SkillSwap</a>
+        <button class="mobile-menu-btn" aria-label="Toggle menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="explore.html">Explore Skills</a>
+          <a href="dashboard.html">Dashboard</a>
+          <a href="#" onclick="logout(); return false;">Logout</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="main-content">
+      <div class="container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+          <div class="profile-avatar" id="profile-avatar">
+            <!-- Initial will be set via JS -->
+          </div>
+          <div class="profile-info">
+            <h1 id="profile-name">User Name</h1>
+            <p id="profile-email">user@email.com</p>
+            <p id="profile-rating"></p>
+            <p id="profile-member-since" class="review-date"></p>
+          </div>
+        </div>
+
+        <!-- Profile Form -->
+        <div class="card" style="max-width: 700px;">
+          <h3 style="margin-bottom: 1.5rem;">Edit Profile</h3>
+          
+          <form id="profile-form">
+            <div class="form-group">
+              <label for="bio" class="form-label">Bio</label>
+              <textarea id="bio" name="bio" class="form-textarea" placeholder="Tell others about yourself..." rows="4"></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="skills-teach" class="form-label">Skills I Can Teach</label>
+              <input type="text" id="skills-teach" name="skills-teach" class="form-input" placeholder="e.g., Python, Guitar, Spanish (comma separated)">
+              <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.25rem;">Separate skills with commas</p>
+            </div>
+            
+            <div class="form-group">
+              <label for="skills-learn" class="form-label">Skills I Want to Learn</label>
+              <input type="text" id="skills-learn" name="skills-learn" class="form-input" placeholder="e.g., JavaScript, Photography (comma separated)">
+              <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.25rem;">Separate skills with commas</p>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </form>
+        </div>
+
+        <!-- Current Skills Display -->
+        <section class="profile-section" style="margin-top: 2rem;">
+          <h3>Skills Overview</h3>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+            <div class="card">
+              <h4 style="margin-bottom: 1rem; color: var(--primary);">I Can Teach</h4>
+              <div id="display-skills-teach" class="tags">
+                <!-- Skills will be rendered here -->
+              </div>
+            </div>
+            <div class="card">
+              <h4 style="margin-bottom: 1rem; color: var(--accent);">I Want to Learn</h4>
+              <div id="display-skills-learn" class="tags">
+                <!-- Skills will be rendered here -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- My Reviews Section -->
+        <section class="profile-section" style="margin-top: 2rem;">
+          <h3>My Reviews</h3>
+          <div id="my-reviews" class="reviews-list">
+            <!-- Reviews will be rendered here -->
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-bottom">
+          <p>2025 SkillSwap. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Require authentication
+    const user = requireAuth();
+    
+    if (user) {
+      // Populate profile info
+      document.getElementById('profile-avatar').textContent = user.name.charAt(0).toUpperCase();
+      document.getElementById('profile-name').textContent = user.name;
+      document.getElementById('profile-email').textContent = user.email;
+      document.getElementById('profile-member-since').textContent = `Member since ${formatDate(user.createdAt)}`;
+      
+      // Show rating
+      const rating = getTeacherRating(user.id);
+      const reviews = getTeacherReviews(user.id);
+      if (reviews.length > 0) {
+        document.getElementById('profile-rating').innerHTML = `${renderStars(Math.round(rating))} ${rating} (${reviews.length} reviews)`;
+      }
+      
+      // Populate form
+      document.getElementById('bio').value = user.bio || '';
+      document.getElementById('skills-teach').value = (user.skillsTeach || []).join(', ');
+      document.getElementById('skills-learn').value = (user.skillsLearn || []).join(', ');
+      
+      // Display current skills
+      displaySkills();
+      
+      // Load reviews
+      loadMyReviews();
+    }
+
+    /**
+     * Display current skills as tags
+     */
+    function displaySkills() {
+      const teachContainer = document.getElementById('display-skills-teach');
+      const learnContainer = document.getElementById('display-skills-learn');
+      
+      if (user.skillsTeach && user.skillsTeach.length > 0) {
+        teachContainer.innerHTML = user.skillsTeach.map(skill => 
+          `<span class="tag tag-primary">${escapeHtml(skill)}</span>`
+        ).join('');
+      } else {
+        teachContainer.innerHTML = '<span class="tag">No skills added yet</span>';
+      }
+      
+      if (user.skillsLearn && user.skillsLearn.length > 0) {
+        learnContainer.innerHTML = user.skillsLearn.map(skill => 
+          `<span class="tag">${escapeHtml(skill)}</span>`
+        ).join('');
+      } else {
+        learnContainer.innerHTML = '<span class="tag">No skills added yet</span>';
+      }
+    }
+
+    /**
+     * Load reviews received as teacher
+     */
+    function loadMyReviews() {
+      const container = document.getElementById('my-reviews');
+      const reviews = getTeacherReviews(user.id);
+      
+      if (reviews.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <p>No reviews yet. Complete teaching sessions to receive reviews!</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = reviews.map(review => `
+        <div class="card review-card">
+          <div class="review-header">
+            <span class="review-author">${escapeHtml(review.studentName)}</span>
+            ${renderStars(review.rating)}
+          </div>
+          <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+            For: ${escapeHtml(review.listingTitle)}
+          </p>
+          <p>${escapeHtml(review.comment)}</p>
+          <p class="review-date">${formatDate(review.createdAt)}</p>
+        </div>
+      `).join('');
+    }
+
+    /**
+     * Handle profile form submission
+     */
+    document.getElementById('profile-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const bio = document.getElementById('bio').value.trim();
+      const skillsTeachInput = document.getElementById('skills-teach').value;
+      const skillsLearnInput = document.getElementById('skills-learn').value;
+      
+      // Parse skills from comma-separated input
+      const skillsTeach = skillsTeachInput
+        .split(',')
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+      
+      const skillsLearn = skillsLearnInput
+        .split(',')
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+      
+      // Update user object
+      const updatedUser = {
+        ...user,
+        bio: bio,
+        skillsTeach: skillsTeach,
+        skillsLearn: skillsLearn
+      };
+      
+      // Save to storage
+      updateUser(updatedUser);
+      
+      // Update local reference
+      Object.assign(user, updatedUser);
+      
+      // Update display
+      displaySkills();
+      
+      showAlert('Profile updated successfully!', 'success');
+    });
+  </script>
+</body>
+</html>

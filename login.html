@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - SkillSwap</title>
+  <meta name="description" content="Login to your SkillSwap account to continue learning and teaching.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="auth-page">
+    <div class="card auth-card">
+      <a href="index.html" class="logo" style="display: block; text-align: center; margin-bottom: 1.5rem;">SkillSwap</a>
+      <h1>Welcome Back</h1>
+      <p>Login to your account</p>
+      
+      <form id="login-form">
+        <div class="form-group">
+          <label for="email" class="form-label">Email Address</label>
+          <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" id="password" name="password" class="form-input" placeholder="Enter your password" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+      </form>
+      
+      <div class="auth-footer">
+        <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Check if already logged in
+    const currentUser = getCurrentUser();
+    if (currentUser) {
+      window.location.href = 'dashboard.html';
+    }
+
+    // Handle login form submission
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      
+      // Validate inputs
+      if (!email || !password) {
+        showAlert('Please fill in all fields', 'error');
+        return;
+      }
+      
+      // Attempt login
+      const user = loginUser(email, password);
+      
+      if (user) {
+        showAlert('Login successful!', 'success');
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 1000);
+      } else {
+        showAlert('Invalid email or password', 'error');
+      }
+    });
+  </script>
+</body>
+</html>

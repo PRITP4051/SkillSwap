@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Messages - SkillSwap</title>
+  <meta name="description" content="Chat with teachers and students on SkillSwap.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .chat-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 1.5rem;
+      height: calc(100vh - 200px);
+      min-height: 500px;
+    }
+    
+    .chat-sidebar {
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--background);
+    }
+    
+    .chat-sidebar-header {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--background-alt);
+    }
+    
+    .chat-main {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    @media (max-width: 768px) {
+      .chat-layout {
+        grid-template-columns: 1fr;
+      }
+      
+      .chat-sidebar {
+        display: none;
+      }
+      
+      .chat-sidebar.show-mobile {
+        display: block;
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 50;
+        border-radius: 0;
+      }
+      
+      .mobile-back-btn {
+        display: flex !important;
+      }
+    }
+    
+    .mobile-back-btn {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="container">
+        <a href="index.html" class="logo">SkillSwap</a>
+        <button class="mobile-menu-btn" aria-label="Toggle menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="explore.html">Explore Skills</a>
+          <a href="dashboard.html">Dashboard</a>
+          <a href="#" onclick="logout(); return false;">Logout</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="main-content">
+      <div class="container">
+        <h1 style="margin-bottom: 1.5rem;">Messages</h1>
+        
+        <div class="chat-layout">
+          <!-- Conversations Sidebar -->
+          <div class="chat-sidebar" id="chat-sidebar">
+            <div class="chat-sidebar-header">
+              <h4>Conversations</h4>
+            </div>
+            <div id="conversations-list" class="conversations-list" style="padding: 0.5rem;">
+              <!-- Conversations will be rendered here -->
+            </div>
+          </div>
+
+          <!-- Chat Main Area -->
+          <div class="chat-main" id="chat-main">
+            <!-- Mobile back button -->
+            <button class="mobile-back-btn btn btn-secondary btn-sm" onclick="showConversationsList()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              Back to conversations
+            </button>
+            
+            <!-- Empty state when no conversation selected -->
+            <div id="no-conversation" class="empty-state" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <h3>Select a conversation</h3>
+              <p>Choose a conversation from the sidebar or start a new one from a booking.</p>
+            </div>
+
+            <!-- Active conversation -->
+            <div id="active-conversation" class="chat-container hidden">
+              <div class="chat-header">
+                <h4 id="chat-partner-name">Chat Partner</h4>
+              </div>
+              <div class="chat-messages" id="chat-messages">
+                <!-- Messages will be rendered here -->
+              </div>
+              <div class="chat-input-container">
+                <input type="text" id="message-input" class="form-input" placeholder="Type a message..." onkeyup="handleMessageKeyup(event)">
+                <button class="btn btn-primary" onclick="sendChatMessage()">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-bottom">
+          <p>2025 SkillSwap. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Require authentication
+    const user = requireAuth();
+    let currentChatPartner = null;
+    let messageRefreshInterval = null;
+
+    if (user) {
+      // Load conversations
+      loadConversations();
+      
+      // Check URL for user parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetUserId = urlParams.get('user');
+      
+      if (targetUserId) {
+        openConversation(targetUserId);
+      }
+    }
+
+    /**
+     * Load conversation list
+     */
+    function loadConversations() {
+      const container = document.getElementById('conversations-list');
+      const conversations = getConversations();
+      
+      if (conversations.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state" style="padding: 2rem 1rem;">
+            <p>No conversations yet.</p>
+            <p style="font-size: 0.875rem;">Book a session to start chatting!</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = conversations.map(convo => `
+        <div class="conversation-item ${currentChatPartner === convo.partnerId ? 'active' : ''}" 
+             onclick="openConversation('${convo.partnerId}')">
+          <div class="conversation-avatar">${convo.partnerName.charAt(0).toUpperCase()}</div>
+          <div class="conversation-info">
+            <div class="conversation-name">${escapeHtml(convo.partnerName)}</div>
+            <div class="conversation-preview">${escapeHtml(convo.lastMessage.substring(0, 30))}${convo.lastMessage.length > 30 ? '...' : ''}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /**
+     * Open a conversation
+     */
+    function openConversation(partnerId) {
+      const partner = getUserById(partnerId);
+      
+      if (!partner) {
+        showAlert('User not found', 'error');
+        return;
+      }
+      
+      currentChatPartner = partnerId;
+      
+      // Update URL
+      history.replaceState(null, '', `chat.html?user=${partnerId}`);
+      
+      // Show active conversation
+      document.getElementById('no-conversation').classList.add('hidden');
+      document.getElementById('active-conversation').classList.remove('hidden');
+      document.getElementById('chat-partner-name').textContent = partner.name;
+      
+      // Load messages
+      loadMessages();
+      
+      // Refresh conversations list to update active state
+      loadConversations();
+      
+      // Hide sidebar on mobile
+      document.getElementById('chat-sidebar').classList.remove('show-mobile');
+      
+      // Set up auto-refresh for messages
+      if (messageRefreshInterval) {
+        clearInterval(messageRefreshInterval);
+      }
+      messageRefreshInterval = setInterval(loadMessages, 3000);
+    }
+
+    /**
+     * Load messages for current conversation
+     */
+    function loadMessages() {
+      if (!currentChatPartner) return;
+      
+      const container = document.getElementById('chat-messages');
+      const messages = getConversation(currentChatPartner);
+      
+      if (messages.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <p>No messages yet. Start the conversation!</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = messages.map(msg => {
+        const isSent = msg.senderId === user.id;
+        return `
+          <div class="message ${isSent ? 'message-sent' : 'message-received'}">
+            <div>${escapeHtml(msg.content)}</div>
+            <div class="message-time">${formatTime(msg.createdAt)}</div>
+          </div>
+        `;
+      }).join('');
+      
+      // Scroll to bottom
+      container.scrollTop = container.scrollHeight;
+    }
+
+    /**
+     * Send a message
+     */
+    function sendChatMessage() {
+      const input = document.getElementById('message-input');
+      const content = input.value.trim();
+      
+      if (!content || !currentChatPartner) return;
+      
+      const message = sendMessage(currentChatPartner, content);
+      
+      if (message) {
+        input.value = '';
+        loadMessages();
+        loadConversations();
+      }
+    }
+
+    /**
+     * Handle enter key for sending messages
+     */
+    function handleMessageKeyup(event) {
+      if (event.key === 'Enter') {
+        sendChatMessage();
+      }
+    }
+
+    /**
+     * Show conversations list on mobile
+     */
+    function showConversationsList() {
+      document.getElementById('chat-sidebar').classList.add('show-mobile');
+    }
+
+    // Clean up interval on page leave
+    window.addEventListener('beforeunload', () => {
+      if (messageRefreshInterval) {
+        clearInterval(messageRefreshInterval);
+      }
+    });
+  </script>
+</body>
+</html>
