@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skillswap>
+  <!-- SkillSwap Data Export Format -->
+  <!-- This XML file contains the complete data structure for SkillSwap platform -->
+  <metadata>
+    <version>1.0</version>
+    <exportDate>2024-01-16T10:30:00Z</exportDate>
+    <appName>SkillSwap - Student Skill Marketplace</appName>
+    <description>Complete data backup and export format for SkillSwap application</description>
+  </metadata>
+
+  <!-- USERS SECTION -->
+  <users>
+    <user>
+      <id>user_001</id>
+      <name>John Smith</name>
+      <email>john@example.com</email>
+      <bio>Passionate about web development and teaching programming</bio>
+      <createdAt>2024-01-10T08:00:00Z</createdAt>
+      <skillsTeach>
+        <skill>
+          <name>Web Development</name>
+          <level>Advanced</level>
+        </skill>
+        <skill>
+          <name>JavaScript</name>
+          <level>Advanced</level>
+        </skill>
+      </skillsTeach>
+      <skillsLearn>
+        <skill>
+          <name>UI Design</name>
+          <level>Beginner</level>
+        </skill>
+      </skillsLearn>
+    </user>
+    <user>
+      <id>user_002</id>
+      <name>Sarah Johnson</name>
+      <email>sarah@example.com</email>
+      <bio>Graphic designer with 3 years experience</bio>
+      <createdAt>2024-01-12T14:20:00Z</createdAt>
+      <skillsTeach>
+        <skill>
+          <name>UI Design</name>
+          <level>Advanced</level>
+        </skill>
+        <skill>
+          <name>Figma</name>
+          <level>Advanced</level>
+        </skill>
+      </skillsTeach>
+      <skillsLearn>
+        <skill>
+          <name>Web Development</name>
+          <level>Intermediate</level>
+        </skill>
+      </skillsLearn>
+    </user>
+    <user>
+      <id>user_003</id>
+      <name>Mike Chen</name>
+      <email>mike@example.com</email>
+      <bio>Data science enthusiast</bio>
+      <createdAt>2024-01-14T09:15:00Z</createdAt>
+      <skillsTeach>
+        <skill>
+          <name>Python</name>
+          <level>Advanced</level>
+        </skill>
+      </skillsTeach>
+      <skillsLearn>
+        <skill>
+          <name>Machine Learning</name>
+          <level>Beginner</level>
+        </skill>
+      </skillsLearn>
+    </user>
+  </users>
+
+  <!-- LISTINGS SECTION -->
+  <listings>
+    <listing>
+      <id>listing_001</id>
+      <teacherId>user_001</teacherId>
+      <teacherName>John Smith</teacherName>
+      <title>Learn React Basics</title>
+      <description>Complete beginner-friendly course on React fundamentals including components, hooks, and state management</description>
+      <price>25.00</price>
+      <category>Web Development</category>
+      <level>Beginner</level>
+      <duration>60</duration>
+      <sessionType>Online</sessionType>
+      <createdAt>2024-01-10T10:30:00Z</createdAt>
+      <rating>4.8</rating>
+      <reviewCount>12</reviewCount>
+    </listing>
+    <listing>
+      <id>listing_002</id>
+      <teacherId>user_002</teacherId>
+      <teacherName>Sarah Johnson</teacherName>
+      <title>UI/UX Design Masterclass</title>
+      <description>Learn professional UI/UX design principles, Figma workflow, and how to create stunning interfaces</description>
+      <price>30.00</price>
+      <category>UI Design</category>
+      <level>Intermediate</level>
+      <duration>90</duration>
+      <sessionType>Online</sessionType>
+      <createdAt>2024-01-12T15:45:00Z</createdAt>
+      <rating>4.9</rating>
+      <reviewCount>15</reviewCount>
+    </listing>
+    <listing>
+      <id>listing_003</id>
+      <teacherId>user_001</teacherId>
+      <teacherName>John Smith</teacherName>
+      <title>JavaScript Advanced Concepts</title>
+      <description>Deep dive into closures, prototypes, async programming, and advanced JS patterns</description>
+      <price>35.00</price>
+      <category>Web Development</category>
+      <level>Advanced</level>
+      <duration>120</duration>
+      <sessionType>Online</sessionType>
+      <createdAt>2024-01-11T11:20:00Z</createdAt>
+      <rating>4.7</rating>
+      <reviewCount>8</reviewCount>
+    </listing>
+    <listing>
+      <id>listing_004</id>
+      <teacherId>user_003</teacherId>
+      <teacherName>Mike Chen</teacherName>
+      <title>Python for Data Analysis</title>
+      <description>Learn Python, Pandas, NumPy, and Matplotlib for data analysis and visualization</description>
+      <price>28.00</price>
+      <category>Programming</category>
+      <level>Intermediate</level>
+      <duration>75</duration>
+      <sessionType>Online</sessionType>
+      <createdAt>2024-01-14T10:00:00Z</createdAt>
+      <rating>4.6</rating>
+      <reviewCount>5</reviewCount>
+    </listing>
+  </listings>
+
+  <!-- BOOKINGS SECTION -->
+  <bookings>
+    <booking>
+      <id>booking_001</id>
+      <listingId>listing_001</listingId>
+      <listingTitle>Learn React Basics</listingTitle>
+      <teacherId>user_001</teacherId>
+      <teacherName>John Smith</teacherName>
+      <studentId>user_002</studentId>
+      <studentName>Sarah Johnson</studentName>
+      <price>25.00</price>
+      <status>completed</status>
+      <createdAt>2024-01-13T09:00:00Z</createdAt>
+      <completedAt>2024-01-14T10:00:00Z</completedAt>
+      <hasReview>true</hasReview>
+    </booking>
+    <booking>
+      <id>booking_002</id>
+      <listingId>listing_002</listingId>
+      <listingTitle>UI/UX Design Masterclass</listingTitle>
+      <teacherId>user_002</teacherId>
+      <teacherName>Sarah Johnson</teacherName>
+      <studentId>user_001</studentId>
+      <studentName>John Smith</studentName>
+      <price>30.00</price>
+      <status>confirmed</status>
+      <createdAt>2024-01-15T14:30:00Z</createdAt>
+      <scheduledDate>2024-01-18T10:00:00Z</scheduledDate>
+      <hasReview>false</hasReview>
+    </booking>
+    <booking>
+      <id>booking_003</id>
+      <listingId>listing_004</listingId>
+      <listingTitle>Python for Data Analysis</listingTitle>
+      <teacherId>user_003</teacherId>
+      <teacherName>Mike Chen</teacherName>
+      <studentId>user_002</studentId>
+      <studentName>Sarah Johnson</studentName>
+      <price>28.00</price>
+      <status>pending</status>
+      <createdAt>2024-01-15T16:00:00Z</createdAt>
+      <hasReview>false</hasReview>
+    </booking>
+  </bookings>
+
+  <!-- MESSAGES SECTION -->
+  <messages>
+    <message>
+      <id>msg_001</id>
+      <senderId>user_001</senderId>
+      <senderName>John Smith</senderName>
+      <receiverId>user_002</receiverId>
+      <content>Hey Sarah! I'm interested in your UI/UX course. Can we discuss the details?</content>
+      <createdAt>2024-01-15T08:30:00Z</createdAt>
+      <read>true</read>
+    </message>
+    <message>
+      <id>msg_002</id>
+      <senderId>user_002</senderId>
+      <senderName>Sarah Johnson</senderName>
+      <receiverId>user_001</receiverId>
+      <content>Of course! I'd love to teach you. When would be a good time to start?</content>
+      <createdAt>2024-01-15T09:15:00Z</createdAt>
+      <read>true</read>
+    </message>
+    <message>
+      <id>msg_003</id>
+      <senderId>user_002</senderId>
+      <senderName>Sarah Johnson</senderName>
+      <receiverId>user_001</receiverId>
+      <content>Thanks for taking my React course! You did amazing. Let me know if you need any help!</content>
+      <createdAt>2024-01-14T11:00:00Z</createdAt>
+      <read>true</read>
+    </message>
+  </messages>
+
+  <!-- REVIEWS SECTION -->
+  <reviews>
+    <review>
+      <id>review_001</id>
+      <bookingId>booking_001</bookingId>
+      <teacherId>user_001</teacherId>
+      <studentId>user_002</studentId>
+      <studentName>Sarah Johnson</studentName>
+      <listingTitle>Learn React Basics</listingTitle>
+      <rating>5</rating>
+      <comment>Excellent course! John is very patient and explains concepts clearly. Highly recommended!</comment>
+      <createdAt>2024-01-14T10:30:00Z</createdAt>
+    </review>
+    <review>
+      <id>review_002</id>
+      <bookingId>booking_001</bookingId>
+      <teacherId>user_001</teacherId>
+      <studentId>user_002</studentId>
+      <studentName>Sarah Johnson</studentName>
+      <listingTitle>Learn React Basics</listingTitle>
+      <rating>4</rating>
+      <comment>Great fundamentals covered. Would appreciate more real-world examples.</comment>
+      <createdAt>2024-01-12T14:00:00Z</createdAt>
+    </review>
+  </reviews>
+
+  <!-- STATISTICS SECTION -->
+  <statistics>
+    <totalUsers>3</totalUsers>
+    <totalListings>4</totalListings>
+    <totalBookings>3</totalBookings>
+    <totalMessages>3</totalMessages>
+    <totalReviews>2</totalReviews>
+    <averageRating>4.75</averageRating>
+    <generatedAt>2024-01-16T10:30:00Z</generatedAt>
+  </statistics>
+</skillswap>
