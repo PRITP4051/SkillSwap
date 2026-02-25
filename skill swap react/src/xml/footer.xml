@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<footerData>
+  <company>SkillSwap</company>
+  <tagline>Exchange skills, grow together.</tagline>
+  <links>
+    <link url="/">Home</link>
+    <link url="/discover">Explore Skills</link>
+    <link url="/community">Community</link>
+    <link url="/about">About Us</link>
+    <link url="/contact">Contact</link>
+  </links>
+  <social>
+    <platform url="https://twitter.com">Twitter</platform>
+    <platform url="https://instagram.com">Instagram</platform>
+    <platform url="https://linkedin.com">LinkedIn</platform>
+    <platform url="https://github.com">GitHub</platform>
+  </social>
+  <legal>
+    <item url="/privacy">Privacy Policy</item>
+    <item url="/terms">Terms of Service</item>
+  </legal>
+</footerData>
